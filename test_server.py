@@ -4,8 +4,8 @@ import server
 
 def test_get_config():
     config_data = server.get_config()
-    assert config_data['targets'][0]['name'] == 'localhost:9115'
-    assert config_data['targets'][0]['url'] == 'http://localhost:9115'
+    assert config_data['targets'][0]['name'] == 'localhost:9126'
+    assert config_data['targets'][0]['url'] == 'http://localhost:9126'
 
 
 @pytest.fixture
