@@ -4,13 +4,13 @@ import yaml
 from aiohttp import web, ClientSession, TCPConnector
 import async_timeout
 
-parser = argparse.ArgumentParser(description='Prometheus HTTP exporter.')
+parser = argparse.ArgumentParser(description='Prometheus HTTP proxy.')
 parser.add_argument('-c', '--config', dest='config', default='config.yml',
                     help='Path to configuration yaml-file. Default config.yml')
 parser.add_argument('--host', dest='host', default='0.0.0.0',
                     help='HTTP server host. Default 0.0.0.0')
-parser.add_argument('-p', '--port', dest='port', default=9115, type=int,
-                    help='HTTP server port. Default 9115')
+parser.add_argument('-p', '--port', dest='port', default=9126, type=int,
+                    help='HTTP server port. Default 9126')
 args = parser.parse_args()
 
 
@@ -43,11 +43,15 @@ async def is_probe_success(target: dict, headers: dict) -> bool:
         return False
 
 async def index(request):
-    return web.Response(text='<h1>HTTP exporter</h1><p><a href="/metrics">Metrics</a><p>', content_type='text/html')
+    return web.Response(text='<h1>HTTP proxy</h1><p><a href="/metrics">Metrics</a><p>', content_type='text/html')
 
 async def metrics(request):
     result = ''
-    auth_header = {'Authorization': request.headers['Authorization']} if 'Authorization' in request.headers else {}
+    
+    auth_header = {}
+    if request.headers.get('Authorization'):
+        auth_header['Authorization'] = request.headers['Authorization']
+        
     config = get_config()
     for target in config.get('targets', []):
         probe_success = await is_probe_success(target=target, headers=auth_header)
