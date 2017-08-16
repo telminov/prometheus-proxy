@@ -20,7 +20,8 @@ def create_app() -> web.Application:
     return app
 
 
-async def _request(target: str, scheme: str, headers: dict, path: str, verify_ssl: bool) -> tuple:
+async def _request(target: str, headers: dict, scheme: str = 'http', path: str = '/metrics',
+                   verify_ssl: bool = True) -> tuple:
     try:
         url = scheme + '://' + target + path
         verify_ssl = verify_ssl
@@ -37,22 +38,18 @@ async def index(request):
     return web.Response(text='<h1>HTTP proxy</h1><p><a href="/metrics">Metrics</a><p>', content_type='text/html')
 
 async def metrics(request):
-    target = ''
-    path = '/metrics'
-    verify_ssl = 1
-    scheme = 'http'
+    data = dict()
+    data['headers'] = request.headers
+    data['target'] = request.query['target']
 
-    request_headers = request.headers
-    if request.query.get('target'):
-        target = request.query['target']
-    if request.query.get('path'):
-        path = request.query['path']
-    if request.query.get('verify_ssl'):
-        verify_ssl = request.query['verify_ssl']
     if request.query.get('scheme'):
-        scheme = request.query['scheme']
-    result, status, response_headers = await _request(target=target, scheme=scheme, headers=request_headers,
-                                                      path=path, verify_ssl=bool(verify_ssl))
+        data['scheme'] = request.query.get('scheme')
+    if request.query.get('path'):
+        data['path'] = request.query.get('path')
+    if request.query.get('verify_ssl'):
+        data['verify_ssl'] = request.query.get('verify_ssl')
+
+    result, status, response_headers = await _request(**data)
 
     return web.Response(text=result, status=status, headers=response_headers)
 
