@@ -38,18 +38,18 @@ async def index(request):
     return web.Response(text='<h1>HTTP proxy</h1><p><a href="/metrics">Metrics</a><p>', content_type='text/html')
 
 async def metrics(request):
-    data = dict()
-    data['headers'] = request.headers
-    data['target'] = request.query['target']
+    params = dict()
+    params['headers'] = request.headers
+    params['target'] = request.query['target']
 
     if request.query.get('scheme'):
-        data['scheme'] = request.query.get('scheme')
+        params['scheme'] = request.query.get('scheme')
     if request.query.get('path'):
-        data['path'] = request.query.get('path')
+        params['path'] = request.query.get('path')
     if request.query.get('verify_ssl'):
-        data['verify_ssl'] = request.query.get('verify_ssl')
+        params['verify_ssl'] = request.query.get('verify_ssl')
 
-    result, status, response_headers = await _request(**data)
+    result, status, response_headers = await _request(**params)
 
     return web.Response(text=result, status=status, headers=response_headers)
 
