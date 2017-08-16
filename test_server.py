@@ -2,12 +2,6 @@ import pytest
 import server
 
 
-def test_get_config():
-    config_data = server.get_config()
-    assert config_data['targets'][0]['name'] == 'localhost:9126'
-    assert config_data['targets'][0]['url'] == 'http://localhost:9126'
-
-
 @pytest.fixture
 def cli(loop, test_client):
     app = server.create_app()
@@ -19,9 +13,9 @@ async def test_index(cli):
     assert resp.status == 200
 
     text = await resp.text()
-    assert 'HTTP exporter' in text
+    assert 'HTTP proxy' in text
 
 
 async def test_metrics(cli):
     resp = await cli.get('/metrics')
-    assert resp.status == 200
+    assert resp.status == 500
