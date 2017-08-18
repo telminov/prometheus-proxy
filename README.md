@@ -8,6 +8,8 @@ You can use these params:
  * `path`: The HTTP resource path on which to fetch metrics from targets (default=`/metrics`)
  * `verify_ssl`: Disable or Enable validation of the server certificate (default=`True`)
 
+You can also send the Authorization header to login to your resource
+
 # Docker 
 build image 
 ```text
