@@ -32,11 +32,11 @@ async def _request(target: str, headers: dict, scheme: str = 'http', path: str =
             with async_timeout.timeout(10):
                 async with session.get(url, headers=headers) as response:
                     text = await response.text()
-                    print(f'response status {response.status}, response headers {response.headers}')
-                    return text, response.status, response.headers
+                    print(f'response status {response.status}')
+                    return text, response.status
     except Exception as ex:
         print(f'Exception: {ex}')
-        return str(ex), HTTP_STATUS_ERROR, {}
+        return str(ex), HTTP_STATUS_ERROR
 
 async def index(request):
     return web.Response(text='<h1>HTTP proxy</h1><p><a href="/metrics">Metrics</a><p>', content_type='text/html')
@@ -62,9 +62,9 @@ async def metrics(request):
             verify_ssl = int(verify_ssl)
         params['verify_ssl'] = bool(verify_ssl)
 
-    result, status, response_headers = await _request(**params)
+    result, status = await _request(**params)
 
-    return web.Response(text=result, status=status, headers=response_headers)
+    return web.Response(text=result, status=status)
 
 
 if __name__ == '__main__':
