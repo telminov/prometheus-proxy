@@ -13,7 +13,7 @@ You can also send the Authorization header to login to your resource
 # Docker 
 build image 
 ```text
-docker build -t prometheus-proxy
+docker build -t telminov/prometheus-proxy
 ```
 or get image
 ```text
